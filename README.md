@@ -1,98 +1,235 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+https://github.com/ISC-UPA/2026-2-nestmongo-a  
+# Construir una API en NestJS con MongoDB
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API versionada con prefijo /api/v1  
+Persistencia con MongoDB y Mongoose
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerrequisitos
 
-## Description
+- Node.js LTS instalado
+- npm disponible
+- MongoDB en ejecución local (o cadena MONGODB_URI válida)
+- Instalacion de CLI  
+    npm install -g @nestjs/cli  
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Comprobacion de Requisitos
+C:\dev>node --version  
+v24.13.1
 
-```bash
-$ npm install
+C:\dev>npm --version  
+11.13.0
+
+nest CLI
+C:\dev>nest --version  
+11.0.21  
+
+Paquetes globales instalados:  
+C:\dev>npm list -g --depth=0  
+- C:\Users\carlos.herrera\AppData\Roaming\npm  
+- +-- @nestjs/cli@11.0.21  
+- `-- npm@11.13.0  
+
+Revisar la ubicación del binario  
+C:\dev\NestJs>where nest  
+- C:\Users\carlos.herrera\AppData\Roaming\npm\nest  
+
+## ⚙️ Conexión MongoDB
+
+Por defecto: `mongodb://localhost:27017/prueba`  
+En el archivo .env: `MONGODB_URI=mongodb://usuario:password@localhost:27017/DB?authSource=admin`  
+Servidor: http://localhost:3000  
+Base URL API: http://localhost:3000/api/v1/health  
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+  A[Request HTTP] --> B[Controller]
+  B --> C[Service]
+  C --> D[Mongoose Model]
+  D --> E[(MongoDB)]
 ```
 
-## Compile and run the project
+- Controller: recibe y valida entrada (DTO).
+- Service: aplica reglas de negocio.
+- Model: ejecuta consultas a MongoDB.
 
-```bash
-# development
-$ npm run start
+## 📁 Estructura
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+src/
+├── controllers/           # Controladores
+│   ├── departamentos.controller.ts
+│   └── health.controller.ts
+├── dto/                   # Contratos de entrada validados
+│   ├── create-departamentos.dto.ts
+│   └── update-departamentos.dto.ts
+├── modules/               # Feature modules por dominio
+│   ├── departamentos.module.ts
+├── schemas/               # Definiciones de modelos
+│   ├── departamento.schema.ts
+├── services/              # Servicios de dominio
+│   ├── departamentos.service.ts
+├── app.module.ts            # Módulo raíz
+└── main.ts                # Punto de entrada
+.env
+.gitignore
+README.md
+package.json
 ```
 
-## Run tests
+## 📍 Endpoints Disponibles
+
+Base URL de la API: `http://localhost:3000/api/v1`
+
+### Salud
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+GET    /api/v1/health                       # API arriba y respondiendo
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Departamentos
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+GET    /api/v1/departamentos           # Listar todos
+POST   /api/v1/departamentos           # Crear
+GET    /api/v1/departamentos/:id       # Obtener por ID
+PUT    /api/v1/departamentos/:id       # Actualizar
+DELETE /api/v1/departamentos/:id       # Eliminar
+GET    /api/v1/departamentos/count/total  # Contar
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🧪 Insertar Departamento: curl, bruno o postman
 
-## Resources
+```bash
+curl -X POST http://localhost:3000/api/v1/departamentos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_dep": 10,
+    "descripcion": "Ventas"
+  }'
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📋 Listar Departamentos
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+curl http://localhost:3000/api/v1/departamentos
+```
 
-## Support
+# ⚡ Pasos para la construcción de la API:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 1) Crear proyecto
 
-## Stay in touch
+    nest new my-proyecto-api
+    cd my-proyecto-api
+Selecciona **npm** cuando el asistente lo pregunte.  
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Instalar dependencias de aplicación:  
+- npm install @nestjs/mongoose mongoose @nestjs/config class-validator  class-transformer reflect-metadata rxjs  
 
-## License
+Instalar dependencias de desarrollo:  
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- npm install -D nodemon     
+
+## 2) Ajustar scripts de package.json
+
+Deja un bloque de scripts similar a este:  
+
+    "scripts": {
+      "start": "node dist/main",
+      "dev": "nodemon --exec ts-node src/main.ts",
+      "build": "nest build",
+      "watch": "nest start --watch"
+    }
+
+
+## 3) Cascarón del proyecto
+
+Generar módulos:  
+    nest generate module modules/departamentos
+
+Generar controladores:  
+    nest generate controller controllers/health --no-spec  
+    nest generate controller controllers/departamentos --no-spec  
+
+Generar servicios:  
+    nest generate service services/departamentos --no-spec  
+
+Crear carpetas técnicas:  
+    src/dto  
+    src/schemas  
+
+PowerShell (Windows):  
+Crear archivos vacíos:  
+    New-Item -ItemType File -Force src\dto\create-departamento.dto.ts,src\dto\update-departamento.dto.ts  
+    New-Item -ItemType File -Force src\schemas\departamento.schema.ts  
+
+
+## 4) Secuencia didáctica recomendada
+
+    1. Schemas
+       - departamento.schema.ts
+               validación de tipos y reglas de negocio
+               decoradores de mongoose
+
+    2. DTOs
+        - create-departamento.dto.ts
+        - update-departamento.dto.ts
+               validación de tipos y reglas
+
+    3. Services
+        - departamentos.service.ts
+               CRUD
+               Validación de tipos y reglas de negocio
+               Manejo de errores
+               Inyección de dependencias
+               Inyección de modelo mongoose
+
+    4. Controllers
+        - health.controller.ts
+        - departamentos.controller.ts
+               Validación de entrada (DTO)
+               Decoradores de rutas y parametros
+
+    5. Modules
+        - departamentos.module.ts
+               Inyección de dependencias
+               Inyección de modelo mongoose
+
+    6. app.module.ts
+        - ConfigModule
+        - MongooseModule con MONGODB_URI
+        - importación de módulos
+        - Configuración de variables de entorno
+        - Registrar HealthController
+
+    7. main.ts
+        - Configuración de puerto
+        - Configuración de validación global (ValidationPipe)
+        - Configuración de CORS
+        - Configuración de prefijo global de rutas api/v1
+        - Configuración de variables de entorno
+
+## 5) 🚀 Comandos para ejecutar la API
+
+    Definida en package.json  
+para instalar dependencias
+
+```bash
+npm install
+```
+
+para desarrollo
+
+```bash
+npm run dev
+# REST API en http://localhost:3000
+```
+
+para producción
+
+```bash
+npm run build
+npm start
+```
