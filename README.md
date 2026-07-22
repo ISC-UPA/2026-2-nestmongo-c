@@ -130,7 +130,8 @@ Instalar dependencias de aplicación:
 
 Instalar dependencias de desarrollo:  
 
-- npm install -D nodemon     
+- npm install -D nodemon  
+- npm i --save-dev @types/node     
 
 ## 2) Ajustar scripts de package.json
 
@@ -147,18 +148,19 @@ Deja un bloque de scripts similar a este:
 ## 3) Cascarón del proyecto
 
 Generar módulos:  
-    nest generate module modules/departamentos
+    nest generate module modules/departamentos --flat  
 
 Generar controladores:  
-    nest generate controller controllers/health --no-spec  
-    nest generate controller controllers/departamentos --no-spec  
+    nest generate controller controllers/health --no-spec --flat  
+    nest generate controller controllers/departamentos --no-spec --flat 
 
 Generar servicios:  
-    nest generate service services/departamentos --no-spec  
+    nest generate service services/departamentos --no-spec --flat 
 
 Crear carpetas técnicas:  
     src/dto  
     src/schemas  
+    nest g schemas 
 
 PowerShell (Windows):  
 Crear archivos vacíos:  

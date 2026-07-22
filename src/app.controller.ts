@@ -1,3 +1,4 @@
+// Se puede borrar este archivo
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 

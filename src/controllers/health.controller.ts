@@ -5,9 +5,8 @@ export class HealthController {
     @Get()
     check() {
         return {
-            status: 'ok',
-            timestamp: new Date().toISOString(),
+            status: 'OK',
+            timestamp: new Date().toISOString()
         };
     }
 }
-
