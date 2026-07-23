@@ -3,8 +3,8 @@ import { DepartamentosService } from '../services/departamentos.service';
 
 @Controller('departamentos')
 export class DepartamentosController {
-  constructor(private readonly departamentosService: DepartamentosService) {}
-  
+  constructor(private readonly departamentosService: DepartamentosService) { }
+
   @Get()
   findAll() {
     return this.departamentosService.findAll();
